@@ -5,7 +5,7 @@
 # It sets up Docker, Docker Compose, Nginx as a reverse proxy, and secures the application with Let's Encrypt SSL.
 
 # --- SERVER IP ---
-SERVER_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+SERVER_IP=$(curl -s ifconfig.me/ip || curl -s icanhazip.com)
 
 # --- Configuration Variables ---
 WAHA_DIR="/root/waha" # Directory where WAHA will be installed
