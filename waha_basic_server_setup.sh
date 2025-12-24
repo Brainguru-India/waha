@@ -97,7 +97,7 @@ echo ""
 
 # 5. Install system dependencies
 log_message "Installing system dependencies..."
-apt update || error_exit "Failed to update package list."
+apt update -y && apt upgrade -y && apt autoremove -y && apt autoclean -y || error_exit "Failed to update basic services."
 apt install -y curl wget gnupg2 lsb-release net-tools || error_exit "Failed to install system dependencies."
 
 # 6. Install Git
