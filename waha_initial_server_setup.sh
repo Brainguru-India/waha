@@ -158,9 +158,6 @@ install_git
 # 7. Install Docker and Docker Compose
 install_docker
 
-# 8. Install Nginx
-install_nginx
-
 # 9. Configure UFW
 configure_ufw
 
