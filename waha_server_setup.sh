@@ -11,6 +11,23 @@ SERVER_IP=$(curl -s ifconfig.me/ip || curl -s icanhazip.com)
 WAHA_DIR="/root/waha" # Directory where WAHA will be installed
 WAHA_PORT="3000" # Default WAHA port, as per documentation
 
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --port)
+            WAHA_PORT="$2"
+            shift 2
+            ;;
+        --dir)
+            WAHA_DIR="/root/$2"
+            shift 2
+            ;;
+        *)
+            error_exit "Unknown option: $1"
+            ;;
+    esac
+done
+
 # --- Functions ---
 
 # Function to display messages
@@ -102,9 +119,7 @@ configure_ufw() {
         apt install -y ufw || error_exit "Failed to install UFW."
     fi
     
-	sed -i "s|IPV6=yes|IPV6=no|" /etc/default/ufw || error_exit "Failed to fix ufw IPV6 configuration."
-	ufw reload || error_exit "Failed to reload UFW."
-    ufw allow OpenSSH || error_exit "Failed to allow OpenSSH through UFW."
+	ufw allow OpenSSH || error_exit "Failed to allow OpenSSH through UFW."
     ufw allow $WAHA_PORT || error_exit "Failed to allow $WAHA_PORT through UFW."
 	ufw --force enable || error_exit "Failed to enable UFW."
     log_message "UFW configured successfully. Allowed OpenSSH and $WAHA_PORT."
