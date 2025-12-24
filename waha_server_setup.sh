@@ -8,8 +8,8 @@
 SERVER_IP=$(curl -s ifconfig.me/ip || curl -s icanhazip.com)
 
 # --- Configuration Variables ---
-WAHA_DIR="/root/waha" # Directory where WAHA will be installed
 WAHA_PORT="3000" # Default WAHA port, as per documentation
+WAHA_DIR="/root/waha" # Directory where WAHA will be installed
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
