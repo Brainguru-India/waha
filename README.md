@@ -1,15 +1,9 @@
-Use this to initially update the Server-
+Use this to install basic services on the Server-
 
-apt update -y && apt upgrade -y && apt autoremove -y && apt autoclean -y && reboot
-
-----------------------------------------------------------
-
-Use this to initially install WAHA on the Server-
-
-curl -fsSL https://raw.githubusercontent.com/Brainguru-India/waha/refs/heads/main/waha_initial_server_setup.sh | bash -s -- --port 3000 --dir waha-main
+curl -fsSL https://raw.githubusercontent.com/Brainguru-India/waha/refs/heads/main/waha_basic_server_setup.sh | bash
 
 ----------------------------------------------------------
 
-Use this to install Add on WAHA Containers on the Server-
+Use this to install WAHA Containers on the Server-
 
 curl -fsSL https://raw.githubusercontent.com/Brainguru-India/waha/refs/heads/main/waha_add_on_server_setup.sh | bash -s -- --port 3001 --dir waha-1
