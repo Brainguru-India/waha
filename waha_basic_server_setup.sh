@@ -91,10 +91,6 @@ configure_ufw() {
 
 check_root
 
-log_message "Starting Basic Installation."
-
-echo ""
-
 # 5. Install system dependencies
 log_message "Installing system dependencies..."
 apt update -y && apt upgrade -y && apt autoremove -y && apt autoclean -y || error_exit "Failed to update basic services."
