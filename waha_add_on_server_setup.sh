@@ -152,6 +152,9 @@ else
 	sed -i "/^WAHA_APPS_ENABLED=/a WAHA_APPS_ON=calls" .env || error_exit "Failed to set WAHA_APPS_ON."
 	sed -i "s|^# TZ=.*|TZ=Asia/Kolkata|" .env || error_exit "Failed to set TZ."
 	sed -i "s/^# WHATSAPP_START_SESSION=.*/WHATSAPP_START_SESSION=default/" .env || error_exit "Failed to set WHATSAPP_START_SESSION."
+	
+	# Updating Dockerfile
+	sed -i "s/^EXPOSE 3000/EXPOSE $WAHA_PORT/" Dockerfile || error_exit "Failed to update Dockerfile."
 fi
 
 log_message "WAHA .env file configured."
