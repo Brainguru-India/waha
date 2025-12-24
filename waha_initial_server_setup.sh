@@ -213,11 +213,6 @@ else
 	sed -i "/^WAHA_APPS_ENABLED=/a WAHA_APPS_ON=calls" .env || error_exit "Failed to set WAHA_APPS_ON."
 	sed -i "s|^# TZ=.*|TZ=Asia/Kolkata|" .env || error_exit "Failed to set TZ."
 	sed -i "s/^# WHATSAPP_START_SESSION=.*/WHATSAPP_START_SESSION=default/" .env || error_exit "Failed to set WHATSAPP_START_SESSION."
-	
-    # Set port if not already set
-    if ! grep -q "WAHA_PORT" .env; then
-        echo "WAHA_PORT=$WAHA_PORT" >> .env || error_exit "Failed to add WAHA_PORT to .env."
-    fi
 fi
 
 log_message "WAHA .env file configured."
