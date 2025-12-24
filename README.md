@@ -1,4 +1,4 @@
-Use this to initially update the server-
+Use this to initially update the Server-
 
 apt update -y && apt upgrade -y && apt autoremove -y && apt autoclean -y && reboot
 
