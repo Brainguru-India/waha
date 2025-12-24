@@ -208,6 +208,7 @@ else
     sed -i "s/^WHATSAPP_SWAGGER_PASSWORD=.*/WHATSAPP_SWAGGER_PASSWORD=$WAHA_DASHBOARD_PASSWORD/" .env || error_exit "Failed to set WHATSAPP_SWAGGER_PASSWORD."
     sed -i "s/^WHATSAPP_DEFAULT_ENGINE=.*/WHATSAPP_DEFAULT_ENGINE=GOWS/" .env || error_exit "Failed to set WHATSAPP_DEFAULT_ENGINE."
 	sed -i 's|^WAHA_BASE_URL=.*|# &|' .env || error_exit "Failed to unset WAHA_BASE_URL."
+	sed -i "s/^# WHATSAPP_API_PORT=.*/WHATSAPP_API_PORT=$WAHA_PORT/" .env || error_exit "Failed to set WHATSAPP_API_PORT."
 	sed -i "s/^# WAHA_APPS_ENABLED=.*/WAHA_APPS_ENABLED=True/" .env || error_exit "Failed to set WAHA_APPS_ENABLED."
 	sed -i "/^WAHA_APPS_ENABLED=/a WAHA_APPS_ON=calls" .env || error_exit "Failed to set WAHA_APPS_ON."
 	sed -i "s|^# TZ=.*|TZ=Asia/Kolkata|" .env || error_exit "Failed to set TZ."
