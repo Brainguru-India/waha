@@ -5,7 +5,7 @@
 # It sets up Docker, Docker Compose, Nginx as a reverse proxy, and secures the application with Let's Encrypt SSL.
 
 # --- SERVER IP ---
-SERVER_IP=$(curl -s ifconfig.me/ip || curl -s icanhazip.com)
+SERVER_IP=$(ip=$(curl -s ifconfig.me || curl -s icanhazip.com); [[ "$ip" == *:* ]] && echo "[$ip]" || echo "$ip")
 
 # --- Configuration Variables ---
 WAHA_PORT="3000" # Default WAHA port, as per documentation
