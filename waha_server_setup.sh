@@ -97,9 +97,9 @@ configure_ufw() {
 	sed -i "s|IPV6=yes|IPV6=no|" /etc/default/ufw || error_exit "Failed to fix ufw IPV6 configuration."
 	ufw reload || error_exit "Failed to reload UFW."
     ufw allow OpenSSH || error_exit "Failed to allow OpenSSH through UFW."
-    ufw allow 3000 || error_exit "Failed to allow 3000 through UFW."
+    ufw allow $WAHA_PORT || error_exit "Failed to allow $WAHA_PORT through UFW."
 	ufw --force enable || error_exit "Failed to enable UFW."
-    log_message "UFW configured successfully. Allowed OpenSSH and 3000."
+    log_message "UFW configured successfully. Allowed OpenSSH and $WAHA_PORT."
 }
 
 # Generate strong random string
@@ -155,7 +155,7 @@ log_message "Fixing Docker image configuration..."
 if [ -f "docker-compose.yaml" ]; then
     # Replace waha-plus image with correct waha:latest image
     sed -i "s|image: devlikeapro/waha-plus|image: devlikeapro/waha:gows|" docker-compose.yaml || error_exit "Failed to fix Docker image configuration."
-	sed -i "s|'127.0.0.1:3000:3000/tcp'|'3000:3000'|" docker-compose.yaml || error_exit "Failed to fix Docker ports configuration."
+	sed -i "s|'127.0.0.1:3000:3000/tcp'|'$WAHA_PORT:$WAHA_PORT'|" docker-compose.yaml || error_exit "Failed to fix Docker ports configuration."
     log_message "Docker image configuration fixed - using devlikeapro/waha:gows"
 else
     warn_message "docker-compose.yaml not found, skipping image fix"
