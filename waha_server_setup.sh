@@ -108,6 +108,8 @@ configure_ufw() {
         apt install -y ufw || error_exit "Failed to install UFW."
     fi
     
+	sed -i "s|IPV6=yes|IPV6=no|" /etc/default/ufw || error_exit "Failed to fix ufw IPV6 configuration."
+	ufw reload || error_exit "Failed to reload UFW."
     ufw allow OpenSSH || error_exit "Failed to allow OpenSSH through UFW."
     ufw allow 3000 || error_exit "Failed to allow 3000 through UFW."
 	ufw --force enable || error_exit "Failed to enable UFW."
@@ -117,28 +119,6 @@ configure_ufw() {
 # Generate strong random string
 generate_random_string() {
     openssl rand -base64 32 | tr -dc A-Za-z0-9 | head -c "$1"
-}
-
-# Verify WAHA is running
-verify_waha_running() {
-    local subdomain="$1"
-    local max_attempts=30
-    local attempt=1
-    
-    log_message "Verifying WAHA is running..."
-    
-    while [ $attempt -le $max_attempts ]; do
-        if curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:$WAHA_PORT" | grep -q "200\\|401\\|403"; then
-            log_message "WAHA is running successfully on port $WAHA_PORT"
-            return 0
-        fi
-        
-        echo "Attempt $attempt/$max_attempts: Waiting for WAHA to start..."
-        sleep 5
-        ((attempt++))
-    done
-    
-    error_exit "WAHA failed to start after $max_attempts attempts. Check Docker logs: cd $WAHA_DIR && docker compose logs"
 }
 
 # --- Main Script ---
