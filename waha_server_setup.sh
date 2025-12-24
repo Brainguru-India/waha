@@ -36,14 +36,6 @@ check_root() {
     fi
 }
 
-# Check if port is available
-check_port_availability() {
-    local port="$1"
-    if netstat -tuln | grep -q ":$port "; then
-        error_exit "Port $port is already in use. Please free the port or choose a different one."
-    fi
-}
-
 # Install Git
 install_git() {
     log_message "Installing Git..."
@@ -128,9 +120,6 @@ check_root
 log_message "Starting WAHA Installation Script"
 
 echo ""
-
-# 3. Check port availability
-check_port_availability "$WAHA_PORT"
 
 # 4. Generate strong API key and dashboard credentials
 log_message "Generating API Key and Dashboard Credentials..."
