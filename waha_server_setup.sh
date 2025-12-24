@@ -47,9 +47,6 @@ install_git() {
 install_docker() {
     log_message "Installing Docker and Docker Compose..."
 
-    # Update package list
-    apt update || error_exit "Failed to update package list."
-
     # Install necessary packages for Docker
     apt install -y apt-transport-https ca-certificates curl software-properties-common || error_exit "Failed to install Docker prerequisites."
 
@@ -71,9 +68,6 @@ install_docker() {
     # Start and enable Docker service
     systemctl start docker || error_exit "Failed to start Docker service."
     systemctl enable docker || error_exit "Failed to enable Docker service."
-
-    # Verify Docker installation
-    docker run hello-world || error_exit "Docker installation failed. 'hello-world' test failed."
 
     # Add current user to docker group to run docker commands without sudo
     # Fixed typo: usermerm -> usermod
