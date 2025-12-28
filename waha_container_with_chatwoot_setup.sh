@@ -9,12 +9,17 @@ SERVER_IP=$(ip=$(curl -s ifconfig.me || curl -s icanhazip.com); [[ "$ip" == *:* 
 
 # --- Configuration Variables ---
 WAHA_PORT="3000" # Default WAHA port, as per documentation
+CHATWOOT_PORT="3009" # Default Chatwoot port, as per documentation
 WAHA_DIR="/root/waha" # Directory where WAHA will be installed
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --port)
+            WAHA_PORT="$2"
+            shift 2
+            ;;
+        --chatwoot)
             WAHA_PORT="$2"
             shift 2
             ;;
@@ -63,16 +68,17 @@ check_port_availability() {
 
 # Configure UFW firewall
 configure_ufw() {
-    log_message "Configuring UFW firewall..."
+    local port="$1"
+	log_message "Configuring UFW firewall..."
     
     # Install UFW if not present
     if ! command -v ufw &> /dev/null; then
         apt install -y ufw || error_exit "Failed to install UFW."
     fi
     
-    ufw allow $WAHA_PORT || error_exit "Failed to allow $WAHA_PORT through UFW."
+    ufw allow $1 || error_exit "Failed to allow $1 through UFW."
 	ufw --force enable || error_exit "Failed to enable UFW."
-    log_message "UFW configured successfully. Allowed $WAHA_PORT."
+    log_message "UFW configured successfully. Allowed $1."
 }
 
 # Generate strong random string
@@ -90,6 +96,7 @@ echo ""
 
 # 3. Check port availability
 check_port_availability "$WAHA_PORT"
+check_port_availability "$CHATWOOT_PORT"
 
 # 4. Generate strong API key and dashboard credentials
 log_message "Generating API Key and Dashboard Credentials..."
@@ -98,7 +105,8 @@ WAHA_DASHBOARD_USERNAME="admin" # Default, can be changed later
 WAHA_DASHBOARD_PASSWORD=$(generate_random_string 24)
 
 # 9. Configure UFW
-configure_ufw
+configure_ufw "$WAHA_PORT"
+configure_ufw "$CHATWOOT_PORT"
 
 # 10. Clone WAHA repository
 log_message "Cloning WAHA repository..."
@@ -108,9 +116,11 @@ if [ -d "$WAHA_DIR" ]; then
 fi
 
 mkdir -p "$WAHA_DIR" || error_exit "Failed to create WAHA directory."
-git clone https://github.com/devlikeapro/waha.git "$WAHA_DIR" || error_exit "Failed to clone WAHA repository."
 cd "$WAHA_DIR" || error_exit "Failed to change directory to WAHA_DIR."
-log_message "WAHA repository cloned."
+wget https://raw.githubusercontent.com/devlikeapro/waha/refs/heads/core/docker-compose/chatwoot/.chatwoot.env || error_exit "Failed to fetch chatwoot env file."
+wget https://raw.githubusercontent.com/devlikeapro/waha/refs/heads/core/docker-compose/chatwoot/.waha.env || error_exit "Failed to fetch waha env file."
+wget https://raw.githubusercontent.com/devlikeapro/waha/refs/heads/core/docker-compose/chatwoot/docker-compose.yaml || error_exit "Failed to fetch docker compose file."
+log_message "WAHA repository fetched."
 
 # Fix Docker image configuration to use correct WAHA image
 log_message "Fixing Docker image configuration..."
@@ -118,6 +128,7 @@ if [ -f "docker-compose.yaml" ]; then
     # Replace waha-plus image with correct waha:latest image
     sed -i "s|image: devlikeapro/waha-plus|image: devlikeapro/waha:gows|" docker-compose.yaml || error_exit "Failed to fix Docker image configuration."
 	sed -i "s|'127.0.0.1:3000:3000/tcp'|'$WAHA_PORT:$WAHA_PORT'|" docker-compose.yaml || error_exit "Failed to fix Docker ports configuration."
+	sed -i "s|'127.0.0.1:3009:3009'|'$CHATWOOT_PORT:$CHATWOOT_PORT'|" docker-compose.yaml || error_exit "Failed to fix Docker ports configuration."
     log_message "Docker image configuration fixed - using devlikeapro/waha:gows"
 else
     warn_message "docker-compose.yaml not found, skipping image fix"
@@ -145,11 +156,8 @@ else
     sed -i "s/^WAHA_DASHBOARD_PASSWORD=.*/WAHA_DASHBOARD_PASSWORD=$WAHA_DASHBOARD_PASSWORD/" .env || error_exit "Failed to set WAHA_DASHBOARD_PASSWORD."
     sed -i "s/^WHATSAPP_SWAGGER_USERNAME=.*/WHATSAPP_SWAGGER_USERNAME=$WAHA_DASHBOARD_USERNAME/" .env || error_exit "Failed to set WHATSAPP_SWAGGER_USERNAME."
     sed -i "s/^WHATSAPP_SWAGGER_PASSWORD=.*/WHATSAPP_SWAGGER_PASSWORD=$WAHA_DASHBOARD_PASSWORD/" .env || error_exit "Failed to set WHATSAPP_SWAGGER_PASSWORD."
-    sed -i "s/^WHATSAPP_DEFAULT_ENGINE=.*/WHATSAPP_DEFAULT_ENGINE=GOWS/" .env || error_exit "Failed to set WHATSAPP_DEFAULT_ENGINE."
 	sed -i 's|^WAHA_BASE_URL=.*|# &|' .env || error_exit "Failed to unset WAHA_BASE_URL."
 	sed -i "s/^# WHATSAPP_API_PORT=.*/WHATSAPP_API_PORT=$WAHA_PORT/" .env || error_exit "Failed to set WHATSAPP_API_PORT."
-	sed -i "s/^# WAHA_APPS_ENABLED=.*/WAHA_APPS_ENABLED=True/" .env || error_exit "Failed to set WAHA_APPS_ENABLED."
-	sed -i "/^WAHA_APPS_ENABLED=/a WAHA_APPS_ON=calls" .env || error_exit "Failed to set WAHA_APPS_ON."
 	sed -i "s|^# TZ=.*|TZ=Asia/Kolkata|" .env || error_exit "Failed to set TZ."
 	sed -i "s/^# WHATSAPP_START_SESSION=.*/WHATSAPP_START_SESSION=default/" .env || error_exit "Failed to set WHATSAPP_START_SESSION."
 	
@@ -169,6 +177,7 @@ echo "================================================================="
 echo "WAHA Installation Summary"
 echo "================================================================="
 echo "WAHA URL: http://$SERVER_IP:$WAHA_PORT"
+echo "Chatwoot URL: http://$SERVER_IP:$CHATWOOT_PORT"
 echo "API Key: $WAHA_API_KEY"
 echo "Dashboard Username: $WAHA_DASHBOARD_USERNAME"
 echo "Dashboard Password: $WAHA_DASHBOARD_PASSWORD"
