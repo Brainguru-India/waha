@@ -6,4 +6,4 @@ curl -fsSL https://raw.githubusercontent.com/Brainguru-India/waha/refs/heads/mai
 
 Use this to install WAHA Containers on the Server-
 
-curl -fsSL https://raw.githubusercontent.com/Brainguru-India/waha/refs/heads/main/waha_container_setup.sh | bash -s -- --port 3001 --dir waha-1
+curl -fsSL https://raw.githubusercontent.com/Brainguru-India/waha/refs/heads/main/waha_container_setup.sh | bash -s -- --port 3000 --chatwoot 3009 --dir waha
