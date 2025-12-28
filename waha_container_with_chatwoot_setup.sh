@@ -150,9 +150,6 @@ sed -i "s/^# WHATSAPP_API_PORT=.*/WHATSAPP_API_PORT=$WAHA_PORT/" .waha.env || er
 sed -i "s|^# TZ=.*|TZ=Asia/Kolkata|" .waha.env || error_exit "Failed to set TZ."
 sed -i "s/^# WHATSAPP_START_SESSION=.*/WHATSAPP_START_SESSION=default/" .waha.env || error_exit "Failed to set WHATSAPP_START_SESSION."
 sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=http://localhost:$CHATWOOT_PORT|" .chatwoot.env || error_exit "Failed to set FRONTEND_URL."
-	
-# Updating Dockerfile
-sed -i "s/^EXPOSE 3000/EXPOSE $WAHA_PORT/" Dockerfile || error_exit "Failed to update Dockerfile."
 
 log_message "WAHA .env file configured."
 
