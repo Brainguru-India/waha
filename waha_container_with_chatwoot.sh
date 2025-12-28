@@ -20,7 +20,7 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         --chatwoot)
-            WAHA_PORT="$2"
+            CHATWOOT_PORT="$2"
             shift 2
             ;;
         --dir)
