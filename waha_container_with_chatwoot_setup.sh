@@ -108,8 +108,8 @@ WAHA_DASHBOARD_PASSWORD=$(generate_random_string 24)
 configure_ufw "$WAHA_PORT"
 configure_ufw "$CHATWOOT_PORT"
 
-# 10. Clone WAHA repository
-log_message "Cloning WAHA repository..."
+# 10. Fetch WAHA repository
+log_message "Fetching WAHA repository..."
 if [ -d "$WAHA_DIR" ]; then
     warn_message "WAHA directory already exists. Removing it..."
     rm -rf "$WAHA_DIR" || error_exit "Failed to remove existing WAHA directory."
@@ -136,34 +136,23 @@ fi
 
 # 11. Configure WAHA .env file
 log_message "Configuring WAHA .env file..."
-if [ ! -f ".env.example" ]; then
-    warn_message ".env.example not found. Creating basic .env file..."
-    cat <<EOF > .env
-# WAHA Configuration
-WAHA_API_KEY=$WAHA_API_KEY
-WAHA_API_KEY_PLAIN=$WAHA_API_KEY
-WAHA_DASHBOARD_USERNAME=$WAHA_DASHBOARD_USERNAME
-WAHA_DASHBOARD_PASSWORD=$WAHA_DASHBOARD_PASSWORD
-WAHA_PORT=$WAHA_PORT
-EOF
-else
-    cp .env.example .env || error_exit "Failed to copy .env.example to .env."
-    
-    # Update .env with generated values
-    sed -i "s/^WAHA_API_KEY=.*/WAHA_API_KEY=$WAHA_API_KEY/" .env || error_exit "Failed to set WAHA_API_KEY."
-	sed -i "/^WAHA_API_KEY=/a WAHA_API_KEY_PLAIN=$WAHA_API_KEY" .env || error_exit "Failed to set WAHA_API_KEY_PLAIN."
-    sed -i "s/^WAHA_DASHBOARD_USERNAME=.*/WAHA_DASHBOARD_USERNAME=$WAHA_DASHBOARD_USERNAME/" .env || error_exit "Failed to set WAHA_DASHBOARD_USERNAME."
-    sed -i "s/^WAHA_DASHBOARD_PASSWORD=.*/WAHA_DASHBOARD_PASSWORD=$WAHA_DASHBOARD_PASSWORD/" .env || error_exit "Failed to set WAHA_DASHBOARD_PASSWORD."
-    sed -i "s/^WHATSAPP_SWAGGER_USERNAME=.*/WHATSAPP_SWAGGER_USERNAME=$WAHA_DASHBOARD_USERNAME/" .env || error_exit "Failed to set WHATSAPP_SWAGGER_USERNAME."
-    sed -i "s/^WHATSAPP_SWAGGER_PASSWORD=.*/WHATSAPP_SWAGGER_PASSWORD=$WAHA_DASHBOARD_PASSWORD/" .env || error_exit "Failed to set WHATSAPP_SWAGGER_PASSWORD."
-	sed -i 's|^WAHA_BASE_URL=.*|# &|' .env || error_exit "Failed to unset WAHA_BASE_URL."
-	sed -i "s/^# WHATSAPP_API_PORT=.*/WHATSAPP_API_PORT=$WAHA_PORT/" .env || error_exit "Failed to set WHATSAPP_API_PORT."
-	sed -i "s|^# TZ=.*|TZ=Asia/Kolkata|" .env || error_exit "Failed to set TZ."
-	sed -i "s/^# WHATSAPP_START_SESSION=.*/WHATSAPP_START_SESSION=default/" .env || error_exit "Failed to set WHATSAPP_START_SESSION."
+
+# Update .env with generated values
+sed -i "s/^WAHA_API_KEY=.*/WAHA_API_KEY=$WAHA_API_KEY/" .waha.env || error_exit "Failed to set WAHA_API_KEY."
+sed -i "/^WAHA_API_KEY=/a WAHA_API_KEY_PLAIN=$WAHA_API_KEY" .waha.env || error_exit "Failed to set WAHA_API_KEY_PLAIN."
+sed -i "s/^WAHA_DASHBOARD_USERNAME=.*/WAHA_DASHBOARD_USERNAME=$WAHA_DASHBOARD_USERNAME/" .waha.env || error_exit "Failed to set WAHA_DASHBOARD_USERNAME."
+sed -i "s/^WAHA_DASHBOARD_PASSWORD=.*/WAHA_DASHBOARD_PASSWORD=$WAHA_DASHBOARD_PASSWORD/" .waha.env || error_exit "Failed to set WAHA_DASHBOARD_PASSWORD."
+sed -i "s/^WHATSAPP_SWAGGER_USERNAME=.*/WHATSAPP_SWAGGER_USERNAME=$WAHA_DASHBOARD_USERNAME/" .waha.env || error_exit "Failed to set WHATSAPP_SWAGGER_USERNAME."
+sed -i "s/^WHATSAPP_SWAGGER_PASSWORD=.*/WHATSAPP_SWAGGER_PASSWORD=$WAHA_DASHBOARD_PASSWORD/" .waha.env || error_exit "Failed to set WHATSAPP_SWAGGER_PASSWORD."
+sed -i 's|^WAHA_BASE_URL=.*|# &|' .waha.env || error_exit "Failed to unset WAHA_BASE_URL."
+sed -i 's|^WAHA_PUBLIC_URL=.*|# &|' .waha.env || error_exit "Failed to unset WAHA_PUBLIC_URL."
+sed -i "s/^# WHATSAPP_API_PORT=.*/WHATSAPP_API_PORT=$WAHA_PORT/" .waha.env || error_exit "Failed to set WHATSAPP_API_PORT."
+sed -i "s|^# TZ=.*|TZ=Asia/Kolkata|" .waha.env || error_exit "Failed to set TZ."
+sed -i "s/^# WHATSAPP_START_SESSION=.*/WHATSAPP_START_SESSION=default/" .waha.env || error_exit "Failed to set WHATSAPP_START_SESSION."
+sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=http://localhost:$CHATWOOT_PORT|" .chatwoot.env || error_exit "Failed to set FRONTEND_URL."
 	
-	# Updating Dockerfile
-	sed -i "s/^EXPOSE 3000/EXPOSE $WAHA_PORT/" Dockerfile || error_exit "Failed to update Dockerfile."
-fi
+# Updating Dockerfile
+sed -i "s/^EXPOSE 3000/EXPOSE $WAHA_PORT/" Dockerfile || error_exit "Failed to update Dockerfile."
 
 log_message "WAHA .env file configured."
 
