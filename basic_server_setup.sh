@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# waha_server_setup.sh
-# This script automates the installation of WAHA (WhatsApp HTTP API) on a VPS.
-# It sets up Docker, Docker Compose, Nginx as a reverse proxy, and secures the application with Let's Encrypt SSL.
+# This script automates the basic server installation on a VPS.
+# It sets up Docker and Docker Compose.
 
 # --- Functions ---
 
