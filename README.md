@@ -1,6 +1,6 @@
-Use this to install basic services on the Server-
+Use this to install basic services on the Server (It will be restared at the end)-
 
-curl -fsSL https://raw.githubusercontent.com/Brainguru-India/scripts/refs/heads/main/waha_basic_server_setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Brainguru-India/scripts/refs/heads/main/basic_server_setup.sh | bash
 
 ----------------------------------------------------------
 
