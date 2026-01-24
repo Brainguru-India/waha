@@ -76,16 +76,16 @@ install_docker() {
 
 check_root
 
-# 5. Install system dependencies
+# 1. Install system dependencies
 log_message "Installing system dependencies..."
 apt update -y && apt upgrade -y && apt autoremove -y && apt autoclean -y || error_exit "Failed to update basic services."
 apt install -y curl wget gnupg2 lsb-release net-tools || error_exit "Failed to install system dependencies."
 
-# 6. Install Git
+# 2. Install Git
 install_git
 
-# 7. Install Docker and Docker Compose
+# 3. Install Docker and Docker Compose
 install_docker
 
-# 8. Reboot
+# 4. Reboot
 reboot
