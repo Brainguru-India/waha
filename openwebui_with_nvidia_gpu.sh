@@ -1,4 +1,3 @@
-curl -fsSL https://raw.githubusercontent.com/Brainguru-India/scripts/refs/heads/main/waha_basic_server_setup.sh | bash
 sudo apt install -y ubuntu-drivers-common
 sudo ubuntu-drivers autoinstall
 
