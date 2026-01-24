@@ -87,3 +87,6 @@ install_git
 
 # 7. Install Docker and Docker Compose
 install_docker
+
+# 8. Reboot
+reboot
