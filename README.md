@@ -10,6 +10,12 @@ curl -fsSL https://raw.githubusercontent.com/Brainguru-India/scripts/refs/heads/
 
 ----------------------------------------------------------
 
-Use this to install Open WebUI with Nvidia GPU  on the Server-
+Use this to install Open WebUI with Nvidia GPU on the Server-
 
 curl -fsSL https://raw.githubusercontent.com/Brainguru-India/scripts/refs/heads/main/openwebui_with_nvidia_gpu.sh | bash
+
+----------------------------------------------------------
+
+Use this to install Open WebUI with CPU (Without GPU) on the Server-
+
+docker run -d -p 3000:8080 -v ollama:/root/.ollama -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:ollama
