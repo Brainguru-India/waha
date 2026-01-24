@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# waha_server_setup.sh
 # This script automates the installation of WAHA (WhatsApp HTTP API) on a VPS.
-# It sets up Docker, Docker Compose, Nginx as a reverse proxy, and secures the application with Let's Encrypt SSL.
 
 # --- SERVER IP ---
 SERVER_IP=$(ip=$(curl -s ifconfig.me || curl -s icanhazip.com); [[ "$ip" == *:* ]] && echo "[$ip]" || echo "$ip")
@@ -61,20 +59,6 @@ check_port_availability() {
     fi
 }
 
-# Configure UFW firewall
-configure_ufw() {
-    log_message "Configuring UFW firewall..."
-    
-    # Install UFW if not present
-    if ! command -v ufw &> /dev/null; then
-        apt install -y ufw || error_exit "Failed to install UFW."
-    fi
-    
-    ufw allow $WAHA_PORT || error_exit "Failed to allow $WAHA_PORT through UFW."
-	ufw --force enable || error_exit "Failed to enable UFW."
-    log_message "UFW configured successfully. Allowed $WAHA_PORT."
-}
-
 # Generate strong random string
 generate_random_string() {
     openssl rand -base64 32 | tr -dc A-Za-z0-9 | head -c "$1"
@@ -88,19 +72,16 @@ log_message "Starting WAHA Installation Script"
 
 echo ""
 
-# 3. Check port availability
+# 1. Check port availability
 check_port_availability "$WAHA_PORT"
 
-# 4. Generate strong API key and dashboard credentials
+# 2. Generate strong API key and dashboard credentials
 log_message "Generating API Key and Dashboard Credentials..."
 WAHA_API_KEY=$(generate_random_string 48)
 WAHA_DASHBOARD_USERNAME="admin" # Default, can be changed later
 WAHA_DASHBOARD_PASSWORD=$(generate_random_string 24)
 
-# 9. Configure UFW
-configure_ufw
-
-# 10. Clone WAHA repository
+# 3. Clone WAHA repository
 log_message "Cloning WAHA repository..."
 if [ -d "$WAHA_DIR" ]; then
     warn_message "WAHA directory already exists. Removing it..."
@@ -123,7 +104,7 @@ else
     warn_message "docker-compose.yaml not found, skipping image fix"
 fi
 
-# 11. Configure WAHA .env file
+# 4. Configure WAHA .env file
 log_message "Configuring WAHA .env file..."
 if [ ! -f ".env.example" ]; then
     warn_message ".env.example not found. Creating basic .env file..."
@@ -159,7 +140,7 @@ fi
 
 log_message "WAHA .env file configured."
 
-# 12. Start WAHA containers
+# 5. Start WAHA containers
 log_message "Starting WAHA Docker containers..."
 docker compose up -d || error_exit "Failed to start WAHA containers with Docker Compose."
 
