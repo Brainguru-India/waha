@@ -73,20 +73,6 @@ install_docker() {
     sleep 3
 }
 
-# Configure UFW firewall
-configure_ufw() {
-    log_message "Configuring UFW firewall..."
-    
-    # Install UFW if not present
-    if ! command -v ufw &> /dev/null; then
-        apt install -y ufw || error_exit "Failed to install UFW."
-    fi
-    
-	ufw allow OpenSSH || error_exit "Failed to allow OpenSSH through UFW."
-	ufw --force enable || error_exit "Failed to enable UFW."
-    log_message "UFW configured successfully. Allowed OpenSSH."
-}
-
 # --- Main Script ---
 
 check_root
@@ -101,6 +87,3 @@ install_git
 
 # 7. Install Docker and Docker Compose
 install_docker
-
-# 9. Configure UFW
-configure_ufw
